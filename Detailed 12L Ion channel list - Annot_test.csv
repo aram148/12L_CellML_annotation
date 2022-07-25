@@ -1,0 +1,21 @@
+Workspace,Exposure,Main model elements,Annotation Text,Annotation Ontology,Process,Source,Source_ispart,Sink,Sink_ispart,Mediator,Function,Domain
+https://models.physiomeproject.org/workspace/692,Model of Human Jejunal Smooth Muscle Cell Electrophysiology — Physiome Model Repository (physiomeproject.org),ICaL ,L-Type Ca Current,Flux of Ca2+ ions from extracellular space to cytosol mediated by the LCC,,CHEBI:39123,GO:0005615,CHEBI:39123,GO:0005829,GO:1990454,#NAME?,Jejunal Smooth Muscle Cell
+,,ICaT ,T-Type Ca Current,Flux of Ca2+ ions from extracellular space to cytosol mediated by the TCC,,CHEBI:39123,GO:0005615,CHEBI:39123,GO:0005829,GO:0005245,#NAME?,Jejunal Smooth Muscle Cell
+,,IKv,Voltage dependent K+ Current,Flux of K+ ions from cytosol to the extracellular space through a voltage gated potassium channel,,CHEBI:29103,GO:0005829,CHEBI:29103,GO:0005615,GO:0005249,#NAME?,Jejunal Smooth Muscle Cell
+,,INCX ,Sodium-Calcium exchanger,"Flux of Ca2+ ions from cytosol to extracellular space mediated by the sodium/calcium exchanger.
+
+Flux of Na+ ions from the extracellular space to the cytosol mediated by the sodium/calcium exchanger.",,"CHEBI:39123
+
+CHEBI: 29101","GO:0005829
+
+GO:0005615","CHEBI:39123
+
+CHEBI: 29101","GO:0005615
+
+GO:0005829",PR:000015207,#NAME?,Jejunal Smooth Muscle Cell
+,,INS_K ,Non-selective K+ linear leakage current,Flux of K+ ions from cytosol to the extracellular space mediated by a nonselective protein,,CHEBI:29103,GO:0005829,CHEBI:29103,GO:0005615,PR:000044676,#NAME?,Jejunal Smooth Muscle Cell
+,,INS_Na ,Non-selective Na linear leakage current,Flux of Na+ ions from cytosol to the extracellular space mediated by a nonselective protein,,CHEBI:29101,GO:0005829,CHEBI:29103,GO:0005615,PR:000044676,#NAME?,Jejunal Smooth Muscle Cell
+,,INa,Na current,Flux of Na+ ions from extracellular space to the cytosol mediated by a sodium channel,,CHEBI:29101,GO:0005615,CHEBI:29101,GO:0005615,GO:0005272,#NAME?,Jejunal Smooth Muscle Cell
+,,INaK,Sodum-Potassium pump,"Flux of Na+ ions from the cytosol to the extracellular space mediated by the sodium/potassium exchanger
+
+Flux of K+ ions from the extracellular space to the cytosol mediated by the sodium/potassium exchanger. ",,,,,,,#NAME?,Jejunal Smooth Muscle Cell
