@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<model name="ICaL" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <import xlink:href="../cellLib/Components/units.cellml">
+        <units name="ms" units_ref="ms"/>
+        <units name="mM" units_ref="mM"/>
+        <units name="pA_per_pF" units_ref="pA_per_pF"/>
+        <units name="pA" units_ref="pA"/>
+        <units name="mV" units_ref="mV"/>
+        <units name="nS_per_pF" units_ref="nS_per_pF"/>
+        <units name="nS" units_ref="nS"/>
+        <units name="pF" units_ref="pF"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Ionic_currents.cellml">
+        <component component_ref="Ionic_currents" name="I_pA"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="d_gate"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="f1_gate"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="f2_gate"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Hillfcn.cellml">
+        <component component_ref="Hillfcn" name="Hillfcn"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Hillfcn.cellml">
+        <component component_ref="Hillfcn" name="Hill_nif"/>
+    </import>
+    <import xlink:href="ICaL_gating.cellml">
+        <component component_ref="d_inf" name="d_inf"/>
+        <component component_ref="f_inf" name="f_inf"/>
+        <component component_ref="tau_d" name="tau_d"/>
+        <component component_ref="tau_f2" name="tau_f2"/>
+    </import>
+    <component name="ICaL">
+        <variable name="time" private_interface="out" public_interface="in" units="ms"/>
+        <variable name="I_CaL" private_interface="in" public_interface="out" units="pA_per_pF"/>
+        <variable name="V" private_interface="out" public_interface="in" units="mV"/>
+        <variable name="E_CaL" private_interface="out" public_interface="in" units="mV"/>
+        <variable name="g_CaL" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" private_interface="out" public_interface="in" units="pF"/>
+        <variable name="T" private_interface="out" public_interface="in" units="kelvin"/>
+        <variable name="T0CaL" private_interface="out" public_interface="in" units="kelvin"/>
+        <variable name="Q10Ca" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="nif" public_interface="in" units="mM"/>
+        <variable name="IC50_nif" public_interface="in" units="mM"/>
+        <variable initial_value="1" name="n_nif" private_interface="out" units="dimensionless"/>
+        <variable name="x_nif" private_interface="out" units="dimensionless"/>
+        <variable name="Hill_nif" private_interface="in" units="dimensionless"/>
+        <variable name="g_CaL_nif" private_interface="out" units="nS_per_pF"/>
+        <variable name="Cai" private_interface="out" public_interface="in" units="mM"/>
+        <variable name="K_mCaL" public_interface="in" units="mM"/>
+        <variable name="tau_f1" private_interface="out" public_interface="in" units="ms"/>
+        <variable name="x_h" private_interface="out" units="dimensionless"/>
+        <variable initial_value="1" name="n_h" private_interface="out" units="dimensionless"/>
+        <variable name="f_Ca" private_interface="in" units="dimensionless"/>
+        <variable name="d_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="d" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="f1_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="f_1" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="f2_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="f_2" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="P_CaL" private_interface="out" public_interface="out" units="dimensionless"/>
+        <variable name="d_inf" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="f_inf" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="tau_d" private_interface="in" public_interface="out" units="ms"/>
+        <variable name="tau_f2" private_interface="in" public_interface="out" units="ms"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>P_CaL</ci>
+                <apply>
+                    <times/>
+                    <apply>
+                        <power/>
+                        <ci>d</ci>
+                        <cn cellml:units="dimensionless">2</cn>
+                    </apply>
+                    <ci>f_Ca</ci>
+                    <apply>
+                        <plus/>
+                        <apply>
+                            <times/>
+                            <cn cellml:units="dimensionless">0.8</cn>
+                            <ci>f_1</ci>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <cn cellml:units="dimensionless">0.2</cn>
+                            <ci>f_2</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>x_h</ci>
+                <apply>
+                    <divide/>
+                    <ci>Cai</ci>
+                    <ci>K_mCaL</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>x_nif</ci>
+                <apply>
+                    <divide/>
+                    <ci>nif</ci>
+                    <ci>IC50_nif</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>g_CaL_nif</ci>
+                <apply>
+                    <times/>
+                    <ci>g_CaL</ci>
+                    <ci>Hill_nif</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <component name="convert_I_pA">
+        <variable name="I_CaL" public_interface="out" units="pA_per_pF"/>
+        <variable name="g_CaL_ns" public_interface="out" units="nS"/>
+        <variable name="I_pA" public_interface="in" units="pA"/>
+        <variable name="g_CaL" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" public_interface="in" units="pF"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>g_CaL_ns</ci>
+                <apply>
+                    <times/>
+                    <ci>g_CaL</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>I_CaL</ci>
+                <apply>
+                    <divide/>
+                    <ci>I_pA</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <group>
+        <relationship_ref relationship="encapsulation"/>
+        <component_ref component="ICaL">
+            <component_ref component="I_pA"/>
+            <component_ref component="convert_I_pA"/>
+            <component_ref component="d_gate"/>
+            <component_ref component="f1_gate"/>
+            <component_ref component="f2_gate"/>
+            <component_ref component="d_inf"/>
+            <component_ref component="f_inf"/>
+            <component_ref component="tau_d"/>
+            <component_ref component="tau_f2"/>
+            <component_ref component="Hillfcn"/>
+            <component_ref component="Hill_nif"/>
+        </component_ref>
+    </group>
+    <connection>
+        <map_components component_1="ICaL" component_2="Hillfcn"/>
+        <map_variables variable_1="x_h" variable_2="x"/>
+        <map_variables variable_1="n_h" variable_2="n"/>
+        <map_variables variable_1="f_Ca" variable_2="H"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="Hill_nif"/>
+        <map_variables variable_1="x_nif" variable_2="x"/>
+        <map_variables variable_1="n_nif" variable_2="n"/>
+        <map_variables variable_1="Hill_nif" variable_2="H"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="d_inf"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="d_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="f_inf"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="f_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="tau_d"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="tau_d" variable_2="tau"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="tau_f2"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="tau_f2" variable_2="tau"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="d_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10Ca" variable_2="Q_10"/>
+        <map_variables variable_1="T0CaL" variable_2="T_0"/>
+        <map_variables variable_1="d_init" variable_2="X_init"/>
+        <map_variables variable_1="d" variable_2="X"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="f1_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10Ca" variable_2="Q_10"/>
+        <map_variables variable_1="T0CaL" variable_2="T_0"/>
+        <map_variables variable_1="f1_init" variable_2="X_init"/>
+        <map_variables variable_1="f_1" variable_2="X"/>
+        <map_variables variable_1="tau_f1" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="f2_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10Ca" variable_2="Q_10"/>
+        <map_variables variable_1="T0CaL" variable_2="T_0"/>
+        <map_variables variable_1="f2_init" variable_2="X_init"/>
+        <map_variables variable_1="f_2" variable_2="X"/>
+    </connection>
+    <connection>
+        <map_components component_1="d_inf" component_2="d_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="f_inf" component_2="f1_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="f_inf" component_2="f2_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="tau_d" component_2="d_gate"/>
+        <map_variables variable_1="tau" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="tau_f2" component_2="f2_gate"/>
+        <map_variables variable_1="tau" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="I_pA"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="E_CaL" variable_2="E"/>
+        <map_variables variable_1="P_CaL" variable_2="PO"/>
+    </connection>
+    <connection>
+        <map_components component_1="convert_I_pA" component_2="I_pA"/>
+        <map_variables variable_1="I_pA" variable_2="I"/>
+        <map_variables variable_1="g_CaL_ns" variable_2="g_max"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaL" component_2="convert_I_pA"/>
+        <map_variables variable_1="I_CaL" variable_2="I_CaL"/>
+        <map_variables variable_1="g_CaL_nif" variable_2="g_CaL"/>
+        <map_variables variable_1="C_est" variable_2="C_est"/>
+    </connection>
+</model>

@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<model name="IK2" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <import xlink:href="../cellLib/Components/units.cellml">
+        <units name="ms" units_ref="ms"/>
+        <units name="pA_per_pF" units_ref="pA_per_pF"/>
+        <units name="pA" units_ref="pA"/>
+        <units name="nS" units_ref="nS"/>
+        <units name="mV" units_ref="mV"/>
+        <units name="mM" units_ref="mM"/>
+        <units name="nS_per_pF" units_ref="nS_per_pF"/>
+        <units name="uJ_per_K_mmol" units_ref="uJ_per_K_mmol"/>
+        <units name="C_per_mol" units_ref="C_per_mol"/>
+        <units name="pF" units_ref="pF"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Ionic_currents.cellml">
+        <component component_ref="Ionic_currents" name="I_pA"/>
+    </import>
+    <import xlink:href="../cellLib/Components/E_Nernst.cellml">
+        <component component_ref="E_K" name="E_K"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="p_gate"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="k1_gate"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="k2_gate"/>
+    </import>
+    <import xlink:href="IK2_gating.cellml">
+        <component component_ref="p_inf" name="p_inf"/>
+        <component component_ref="k_inf" name="k_inf"/>
+        <component component_ref="tau_p" name="tau_p"/>
+        <component component_ref="tau_k1" name="tau_k1"/>
+        <component component_ref="tau_k2" name="tau_k2"/>
+    </import>
+    <component name="IK2">
+        <variable name="time" private_interface="out" public_interface="in" units="ms"/>
+        <variable name="I_K2" private_interface="in" public_interface="out" units="pA_per_pF"/>
+        <variable name="V" private_interface="out" public_interface="in" units="mV"/>
+        <variable name="g_K2" private_interface="out" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" private_interface="out" public_interface="in" units="pF"/>
+        <variable name="R" private_interface="out" public_interface="in" units="uJ_per_K_mmol"/>
+        <variable name="F" private_interface="out" public_interface="in" units="C_per_mol"/>
+        <variable name="T" private_interface="out" public_interface="in" units="kelvin"/>
+        <variable name="T0K" private_interface="out" public_interface="in" units="kelvin"/>
+        <variable name="Q10K" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="Ko" private_interface="out" public_interface="in" units="mM"/>
+        <variable name="Ki" private_interface="out" public_interface="in" units="mM"/>
+        <variable name="p_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="p" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="k1_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="k_1" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="k2_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="k_2" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="P_K2" private_interface="out" public_interface="out" units="dimensionless"/>
+        <variable name="p_inf" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="k_inf" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="tau_p" private_interface="in" public_interface="out" units="ms"/>
+        <variable name="tau_k1" private_interface="in" public_interface="out" units="ms"/>
+        <variable name="tau_k2" private_interface="in" public_interface="out" units="ms"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>P_K2</ci>
+                <apply>
+                    <times/>
+                    <ci>p</ci>
+                    <apply>
+                        <plus/>
+                        <apply>
+                            <times/>
+                            <cn cellml:units="dimensionless">0.75</cn>
+                            <ci>k_1</ci>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <cn cellml:units="dimensionless">0.25</cn>
+                            <ci>k_2</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <component name="convert_I_pA">
+        <variable name="I_K2" public_interface="out" units="pA_per_pF"/>
+        <variable name="g_K2_ns" public_interface="out" units="nS"/>
+        <variable name="I_pA" public_interface="in" units="pA"/>
+        <variable name="g_K2" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" public_interface="in" units="pF"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>g_K2_ns</ci>
+                <apply>
+                    <times/>
+                    <ci>g_K2</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>I_K2</ci>
+                <apply>
+                    <divide/>
+                    <ci>I_pA</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <group>
+        <relationship_ref relationship="encapsulation"/>
+        <component_ref component="IK2">
+            <component_ref component="I_pA"/>
+            <component_ref component="convert_I_pA"/>
+            <component_ref component="E_K"/>
+            <component_ref component="p_gate"/>
+            <component_ref component="k1_gate"/>
+            <component_ref component="k2_gate"/>
+            <component_ref component="p_inf"/>
+            <component_ref component="k_inf"/>
+            <component_ref component="tau_p"/>
+            <component_ref component="tau_k1"/>
+            <component_ref component="tau_k2"/>
+        </component_ref>
+    </group>
+    <connection>
+        <map_components component_1="IK2" component_2="p_inf"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="p_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="k_inf"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="k_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="tau_p"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="tau_p" variable_2="tau"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="tau_k1"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="tau_k1" variable_2="tau"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="tau_k2"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="tau_k2" variable_2="tau"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="p_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10K" variable_2="Q_10"/>
+        <map_variables variable_1="T0K" variable_2="T_0"/>
+        <map_variables variable_1="p_init" variable_2="X_init"/>
+        <map_variables variable_1="p" variable_2="X"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="k1_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10K" variable_2="Q_10"/>
+        <map_variables variable_1="T0K" variable_2="T_0"/>
+        <map_variables variable_1="k1_init" variable_2="X_init"/>
+        <map_variables variable_1="k_1" variable_2="X"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="k2_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10K" variable_2="Q_10"/>
+        <map_variables variable_1="T0K" variable_2="T_0"/>
+        <map_variables variable_1="k2_init" variable_2="X_init"/>
+        <map_variables variable_1="k_2" variable_2="X"/>
+    </connection>
+    <connection>
+        <map_components component_1="p_inf" component_2="p_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="k_inf" component_2="k1_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="k_inf" component_2="k2_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="tau_p" component_2="p_gate"/>
+        <map_variables variable_1="tau" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="tau_k1" component_2="k1_gate"/>
+        <map_variables variable_1="tau" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="tau_k2" component_2="k2_gate"/>
+        <map_variables variable_1="tau" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="I_pA"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="P_K2" variable_2="PO"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="E_K"/>
+        <map_variables variable_1="R" variable_2="R"/>
+        <map_variables variable_1="F" variable_2="F"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Ki" variable_2="Ki"/>
+        <map_variables variable_1="Ko" variable_2="Ko"/>
+    </connection>
+    <connection>
+        <map_components component_1="E_K" component_2="I_pA"/>
+        <map_variables variable_1="E_K" variable_2="E"/>
+    </connection>
+    <connection>
+        <map_components component_1="convert_I_pA" component_2="I_pA"/>
+        <map_variables variable_1="I_pA" variable_2="I"/>
+        <map_variables variable_1="g_K2_ns" variable_2="g_max"/>
+    </connection>
+    <connection>
+        <map_components component_1="IK2" component_2="convert_I_pA"/>
+        <map_variables variable_1="I_K2" variable_2="I_K2"/>
+        <map_variables variable_1="g_K2" variable_2="g_K2"/>
+        <map_variables variable_1="C_est" variable_2="C_est"/>
+    </connection>
+</model>

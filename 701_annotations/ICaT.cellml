@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<model name="ICaT" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <import xlink:href="../cellLib/Components/units.cellml">
+        <units name="ms" units_ref="ms"/>
+        <units name="pA_per_pF" units_ref="pA_per_pF"/>
+        <units name="pA" units_ref="pA"/>
+        <units name="mV" units_ref="mV"/>
+        <units name="nS_per_pF" units_ref="nS_per_pF"/>
+        <units name="nS" units_ref="nS"/>
+        <units name="pF" units_ref="pF"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Ionic_currents.cellml">
+        <component component_ref="Ionic_currents" name="I_pA"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="b_gate"/>
+    </import>
+    <import xlink:href="../cellLib/Components/gating_kinetics.cellml">
+        <component component_ref="gating_kinetics" name="g_gate"/>
+    </import>
+    <import xlink:href="ICaT_gating.cellml">
+        <component component_ref="b_inf" name="b_inf"/>
+        <component component_ref="g_inf" name="g_inf"/>
+        <component component_ref="tau_b" name="tau_b"/>
+        <component component_ref="tau_g" name="tau_g"/>
+    </import>
+    <component name="ICaT">
+        <variable name="time" private_interface="out" public_interface="in" units="ms"/>
+        <variable name="I_CaT" private_interface="in" public_interface="out" units="pA_per_pF"/>
+        <variable name="V" private_interface="out" public_interface="in" units="mV"/>
+        <variable name="E_CaT" private_interface="out" public_interface="in" units="mV"/>
+        <variable name="g_CaT" private_interface="out" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" private_interface="out" public_interface="in" units="pF"/>
+        <variable name="T" private_interface="out" public_interface="in" units="kelvin"/>
+        <variable name="T0CaT" private_interface="out" public_interface="in" units="kelvin"/>
+        <variable name="Q10Ca" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="b_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="b" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="g_init" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="g" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="P_CaT" private_interface="out" public_interface="out" units="dimensionless"/>
+        <variable name="b_inf" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="g_inf" private_interface="in" public_interface="out" units="dimensionless"/>
+        <variable name="tau_b" private_interface="in" public_interface="out" units="ms"/>
+        <variable name="tau_g" private_interface="in" public_interface="out" units="ms"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>P_CaT</ci>
+                <apply>
+                    <times/>
+                    <apply>
+                        <power/>
+                        <ci>b</ci>
+                        <cn cellml:units="dimensionless">2</cn>
+                    </apply>
+                    <ci>g</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <component name="convert_I_pA">
+        <variable name="I_CaT" public_interface="out" units="pA_per_pF"/>
+        <variable name="g_CaT_ns" public_interface="out" units="nS"/>
+        <variable name="I_pA" public_interface="in" units="pA"/>
+        <variable name="g_CaT" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" public_interface="in" units="pF"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>g_CaT_ns</ci>
+                <apply>
+                    <times/>
+                    <ci>g_CaT</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>I_CaT</ci>
+                <apply>
+                    <divide/>
+                    <ci>I_pA</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <group>
+        <relationship_ref relationship="encapsulation"/>
+        <component_ref component="ICaT">
+            <component_ref component="I_pA"/>
+            <component_ref component="convert_I_pA"/>
+            <component_ref component="b_gate"/>
+            <component_ref component="g_gate"/>
+            <component_ref component="b_inf"/>
+            <component_ref component="g_inf"/>
+            <component_ref component="tau_b"/>
+            <component_ref component="tau_g"/>
+        </component_ref>
+    </group>
+    <connection>
+        <map_components component_1="ICaT" component_2="b_inf"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="b_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaT" component_2="g_inf"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="g_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaT" component_2="tau_b"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="tau_b" variable_2="tau"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaT" component_2="tau_g"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="tau_g" variable_2="tau"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaT" component_2="b_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10Ca" variable_2="Q_10"/>
+        <map_variables variable_1="T0CaT" variable_2="T_0"/>
+        <map_variables variable_1="b_init" variable_2="X_init"/>
+        <map_variables variable_1="b" variable_2="X"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaT" component_2="g_gate"/>
+        <map_variables variable_1="time" variable_2="time"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="Q10Ca" variable_2="Q_10"/>
+        <map_variables variable_1="T0CaT" variable_2="T_0"/>
+        <map_variables variable_1="g_init" variable_2="X_init"/>
+        <map_variables variable_1="g" variable_2="X"/>
+    </connection>
+    <connection>
+        <map_components component_1="b_inf" component_2="b_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="g_inf" component_2="g_gate"/>
+        <map_variables variable_1="X_inf" variable_2="X_inf"/>
+    </connection>
+    <connection>
+        <map_components component_1="tau_b" component_2="b_gate"/>
+        <map_variables variable_1="tau" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="tau_g" component_2="g_gate"/>
+        <map_variables variable_1="tau" variable_2="tau_X"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaT" component_2="I_pA"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="E_CaT" variable_2="E"/>
+        <map_variables variable_1="P_CaT" variable_2="PO"/>
+    </connection>
+    <connection>
+        <map_components component_1="convert_I_pA" component_2="I_pA"/>
+        <map_variables variable_1="I_pA" variable_2="I"/>
+        <map_variables variable_1="g_CaT_ns" variable_2="g_max"/>
+    </connection>
+    <connection>
+        <map_components component_1="ICaT" component_2="convert_I_pA"/>
+        <map_variables variable_1="I_CaT" variable_2="I_CaT"/>
+        <map_variables variable_1="g_CaT" variable_2="g_CaT"/>
+        <map_variables variable_1="C_est" variable_2="C_est"/>
+    </connection>
+</model>

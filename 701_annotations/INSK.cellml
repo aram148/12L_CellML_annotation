@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<model name="INSK" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <import xlink:href="../cellLib/Components/units.cellml">
+        <units name="pA_per_pF" units_ref="pA_per_pF"/>
+        <units name="pA" units_ref="pA"/>
+        <units name="nS" units_ref="nS"/>
+        <units name="mV" units_ref="mV"/>
+        <units name="mM" units_ref="mM"/>
+        <units name="nS_per_pF" units_ref="nS_per_pF"/>
+        <units name="uJ_per_K_mmol" units_ref="uJ_per_K_mmol"/>
+        <units name="C_per_mol" units_ref="C_per_mol"/>
+        <units name="pF" units_ref="pF"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Ionic_currents.cellml">
+        <component component_ref="Ionic_currents" name="I_NSK_pA"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Nernst_potential.cellml">
+        <component component_ref="Nernst_potential" name="E_NS"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Hillfcn.cellml">
+        <component component_ref="Hillfcn" name="H_Mg"/>
+    </import>
+    <import xlink:href="g_Xo.cellml">
+        <component component_ref="g_Xo" name="g_Ko"/>
+    </import>
+    <component name="INSK">
+        <variable name="V" private_interface="out" public_interface="in" units="mV"/>
+        <variable name="g_NS" private_interface="out" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" private_interface="out" public_interface="in" units="pF"/>
+        <variable name="R" private_interface="out" public_interface="in" units="uJ_per_K_mmol"/>
+        <variable name="F" private_interface="out" public_interface="in" units="C_per_mol"/>
+        <variable name="T" private_interface="out" public_interface="in" units="kelvin"/>
+        <variable name="PCa_PCs" public_interface="in" units="dimensionless"/>
+        <variable name="PNa_PCs" public_interface="in" units="dimensionless"/>
+        <variable name="PK_PCs" public_interface="in" units="dimensionless"/>
+        <variable name="Nao" private_interface="out" public_interface="in" units="mM"/>
+        <variable name="Nai" public_interface="in" units="mM"/>
+        <variable name="Cao" private_interface="out" public_interface="in" units="mM"/>
+        <variable name="Cai" public_interface="in" units="mM"/>
+        <variable name="Ko" private_interface="out" public_interface="in" units="mM"/>
+        <variable name="Ki" public_interface="in" units="mM"/>
+        <variable name="X_o" private_interface="out" units="mM"/>
+        <variable name="X_i" private_interface="out" units="mM"/>
+        <variable name="Mgo" private_interface="out" public_interface="in" units="mM"/>
+        <variable name="K_dMg" public_interface="in" units="mM"/>
+        <variable name="f_Mg" units="dimensionless"/>
+        <variable name="H_Mg" private_interface="in" units="dimensionless"/>
+        <variable name="x_h" private_interface="out" units="dimensionless"/>
+        <variable initial_value="1.3" name="n_h" private_interface="out" units="dimensionless"/>
+        <variable name="g_Ko" private_interface="in" units="dimensionless"/>
+        <variable initial_value="0.0123" name="g_s" private_interface="out" units="dimensionless"/>
+        <variable initial_value="1" name="z_NS" private_interface="out" units="dimensionless"/>
+        <variable name="P_NSK" private_interface="out" public_interface="out" units="dimensionless"/>
+        <variable name="I_NSK" private_interface="in" public_interface="out" units="pA_per_pF"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>P_NSK</ci>
+                <apply>
+                    <times/>
+                    <cn cellml:units="dimensionless">1.19</cn>
+                    <ci>f_Mg</ci>
+                    <ci>g_Ko</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>x_h</ci>
+                <apply>
+                    <divide/>
+                    <ci>Mgo</ci>
+                    <ci>K_dMg</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>f_Mg</ci>
+                <apply>
+                    <plus/>
+                    <cn cellml:units="dimensionless">0.1</cn>
+                    <apply>
+                        <times/>
+                        <cn cellml:units="dimensionless">0.9</cn>
+                        <ci>H_Mg</ci>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>X_o</ci>
+                <apply>
+                    <plus/>
+                    <apply>
+                        <times/>
+                        <ci>PNa_PCs</ci>
+                        <ci>Nao</ci>
+                    </apply>
+                    <apply>
+                        <times/>
+                        <ci>PK_PCs</ci>
+                        <ci>Ko</ci>
+                    </apply>
+                    <apply>
+                        <divide/>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <apply>
+                                    <times/>
+                                    <cn cellml:units="dimensionless">4</cn>
+                                    <ci>PCa_PCs</ci>
+                                </apply>
+                                <apply>
+                                    <plus/>
+                                    <cn cellml:units="dimensionless">1</cn>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <ci>V</ci>
+                                                <ci>F</ci>
+                                            </apply>
+                                            <apply>
+                                                <times/>
+                                                <ci>R</ci>
+                                                <ci>T</ci>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <ci>Cao</ci>
+                            <ci>Cao</ci>
+                        </apply>
+                        <cn cellml:units="mM">1</cn>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>X_i</ci>
+                <apply>
+                    <plus/>
+                    <apply>
+                        <times/>
+                        <ci>PNa_PCs</ci>
+                        <ci>Nai</ci>
+                    </apply>
+                    <apply>
+                        <times/>
+                        <ci>PK_PCs</ci>
+                        <ci>Ki</ci>
+                    </apply>
+                    <apply>
+                        <divide/>
+                        <apply>
+                            <times/>
+                            <apply>
+                                <divide/>
+                                <apply>
+                                    <times/>
+                                    <cn cellml:units="dimensionless">4</cn>
+                                    <ci>PCa_PCs</ci>
+                                </apply>
+                                <apply>
+                                    <plus/>
+                                    <cn cellml:units="dimensionless">1</cn>
+                                    <apply>
+                                        <exp/>
+                                        <apply>
+                                            <divide/>
+                                            <apply>
+                                                <times/>
+                                                <ci>V</ci>
+                                                <ci>F</ci>
+                                            </apply>
+                                            <apply>
+                                                <times/>
+                                                <ci>R</ci>
+                                                <ci>T</ci>
+                                            </apply>
+                                        </apply>
+                                    </apply>
+                                </apply>
+                            </apply>
+                            <ci>Cai</ci>
+                            <ci>Cai</ci>
+                        </apply>
+                        <cn cellml:units="mM">1</cn>
+                    </apply>
+                </apply>
+            </apply>
+        </math>
+        <!-- X_o = PNa_PCs*Nao+PK_PCs*Ko+4{dimensionless}*PCa_PCs/(1{dimensionless}+exp(V*F/(R*T)))*Cao;
+ X_i = PNa_PCs*Nai+PK_PCs*Ki+4{dimensionless}*PCa_PCs/(1{dimensionless}+exp(V*F/(R*T)))*Cai;-->
+    </component>
+    <connection>
+        <map_components component_1="INSK" component_2="H_Mg"/>
+        <map_variables variable_1="x_h" variable_2="x"/>
+        <map_variables variable_1="n_h" variable_2="n"/>
+        <map_variables variable_1="H_Mg" variable_2="H"/>
+    </connection>
+    <component name="convert_I_NSK_pA">
+        <variable name="I_NSK" public_interface="out" units="pA_per_pF"/>
+        <variable name="g_NS_ns" public_interface="out" units="nS"/>
+        <variable name="I_NSK_pA" public_interface="in" units="pA"/>
+        <variable name="g_NS" public_interface="in" units="nS_per_pF"/>
+        <variable name="C_est" public_interface="in" units="pF"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>g_NS_ns</ci>
+                <apply>
+                    <times/>
+                    <ci>g_NS</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>I_NSK</ci>
+                <apply>
+                    <divide/>
+                    <ci>I_NSK_pA</ci>
+                    <ci>C_est</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <group>
+        <relationship_ref relationship="encapsulation"/>
+        <component_ref component="INSK">
+            <component_ref component="I_NSK_pA"/>
+            <component_ref component="convert_I_NSK_pA"/>
+            <component_ref component="E_NS"/>
+            <component_ref component="H_Mg"/>
+            <component_ref component="g_Ko"/>
+        </component_ref>
+    </group>
+    <connection>
+        <map_components component_1="INSK" component_2="I_NSK_pA"/>
+        <map_variables variable_1="V" variable_2="V"/>
+        <map_variables variable_1="P_NSK" variable_2="PO"/>
+    </connection>
+    <connection>
+        <map_components component_1="INSK" component_2="g_Ko"/>
+        <map_variables variable_1="g_s" variable_2="g_s"/>
+        <map_variables variable_1="Ko" variable_2="X_o"/>
+        <map_variables variable_1="g_Ko" variable_2="g_Xo"/>
+    </connection>
+    <connection>
+        <map_components component_1="INSK" component_2="E_NS"/>
+        <map_variables variable_1="R" variable_2="R"/>
+        <map_variables variable_1="F" variable_2="F"/>
+        <map_variables variable_1="T" variable_2="T"/>
+        <map_variables variable_1="z_NS" variable_2="z"/>
+        <map_variables variable_1="X_i" variable_2="X_i"/>
+        <map_variables variable_1="X_o" variable_2="X_o"/>
+    </connection>
+    <connection>
+        <map_components component_1="E_NS" component_2="I_NSK_pA"/>
+        <map_variables variable_1="E" variable_2="E"/>
+    </connection>
+    <connection>
+        <map_components component_1="convert_I_NSK_pA" component_2="I_NSK_pA"/>
+        <map_variables variable_1="I_NSK_pA" variable_2="I"/>
+        <map_variables variable_1="g_NS_ns" variable_2="g_max"/>
+    </connection>
+    <connection>
+        <map_components component_1="INSK" component_2="convert_I_NSK_pA"/>
+        <map_variables variable_1="I_NSK" variable_2="I_NSK"/>
+        <map_variables variable_1="g_NS" variable_2="g_NS"/>
+        <map_variables variable_1="C_est" variable_2="C_est"/>
+    </connection>
+</model>

@@ -1,0 +1,47 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix bqbiol: <http://biomodels.net/biology-qualifiers/> .
+@prefix semsim: <http://bime.uw.edu/semsim/> .
+@prefix OMEXlib: <http://omex-library.org/> .
+@prefix local: <http://omex-library.org/12L_annotations.omex/IKCa_new.rdf#> .
+
+<http://omex-library.org/12L_annotations.omex/IKCa_new.cellml#IKCa>
+    bqbiol:isPropertyOf local:process ;
+    bqbiol:isVersionOf <https://identifiers.org/opb:OPB_00592> .
+
+local:MediatorParticipant0000
+    semsim:hasPhysicalEntityReference local:mediator .
+
+local:SinkParticipant0000
+    semsim:hasMultiplier "1"^^rdf:double ;
+    semsim:hasPhysicalEntityReference local:sink .
+
+local:SourceParticipant0000
+    semsim:hasMultiplier "1"^^rdf:double ;
+    semsim:hasPhysicalEntityReference local:source .
+
+local:cytosol
+    bqbiol:is <https://identifiers.org/GO:0005829> ;
+    bqbiol:isPartOf <https://identifiers.org/FMA:14072>, <https://identifiers.org/FMA:17558> .
+
+local:extracellular
+    bqbiol:is <https://identifiers.org/GO:0005615> ;
+    bqbiol:isPartOf <https://identifiers.org/FMA:14072>, <https://identifiers.org/FMA:17558> .
+
+local:mediator
+    bqbiol:is <https://identifiers.org/PR/000044649> ;
+    bqbiol:isPartOf local:cytosol .
+
+local:process
+    semsim:hasMediatorParticipant local:MediatorParticipant0000 ;
+    semsim:hasSinkParticipant local:SinkParticipant0000 ;
+    semsim:hasSourceParticipant local:SourceParticipant0000 .
+
+local:sink
+    bqbiol:is <https://identifiers.org/CHEBI:39123> ;
+    bqbiol:isPartOf local:extracellular .
+
+local:source
+    bqbiol:is <https://identifiers.org/CHEBI:39123> ;
+    bqbiol:isPartOf local:cytosol .
+
+

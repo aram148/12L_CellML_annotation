@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<model name="ICapump" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <import xlink:href="../cellLib/Components/units.cellml">
+        <units name="mM_per_ms" units_ref="mM_per_ms"/>
+        <units name="pA_per_pF" units_ref="pA_per_pF"/>
+        <units name="pA" units_ref="pA"/>
+        <units name="mM" units_ref="mM"/>
+        <units name="C_per_mol" units_ref="C_per_mol"/>
+        <units name="mF_per_cmsq" units_ref="mF_per_cmsq"/>
+        <units name="cmsq" units_ref="cmsq"/>
+        <units name="cm3" units_ref="cm3"/>
+    </import>
+    <import xlink:href="../cellLib/Components/Hillfcn.cellml">
+        <component component_ref="Hillfcn" name="Hillfcn"/>
+    </import>
+    <component name="ICapump">
+        <variable name="I_Capump" public_interface="out" units="pA_per_pF"/>
+        <variable name="Cm" public_interface="in" units="mF_per_cmsq"/>
+        <variable name="Ac" public_interface="in" units="cmsq"/>
+        <variable name="z_Ca" public_interface="in" units="dimensionless"/>
+        <variable name="J_pCa" public_interface="in" units="mM_per_ms"/>
+        <variable name="F" public_interface="in" units="C_per_mol"/>
+        <variable name="Vc" public_interface="in" units="cm3"/>
+        <variable name="K_mpCa" public_interface="in" units="mM"/>
+        <variable name="Cai" public_interface="in" units="mM"/>
+        <variable name="x_h" private_interface="out" units="dimensionless"/>
+        <variable name="hpCa" private_interface="out" public_interface="in" units="dimensionless"/>
+        <variable name="H_pCa" private_interface="in" units="dimensionless"/>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>x_h</ci>
+                <apply>
+                    <divide/>
+                    <ci>K_mpCa</ci>
+                    <ci>Cai</ci>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>I_Capump</ci>
+                <apply>
+                    <times/>
+                    <apply>
+                        <divide/>
+                        <apply>
+                            <times/>
+                            <ci>z_Ca</ci>
+                            <ci>F</ci>
+                            <ci>Vc</ci>
+                        </apply>
+                        <apply>
+                            <times/>
+                            <ci>Cm</ci>
+                            <ci>Ac</ci>
+                        </apply>
+                    </apply>
+                    <ci>J_pCa</ci>
+                    <ci>H_pCa</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+    <group>
+        <relationship_ref relationship="encapsulation"/>
+        <component_ref component="ICapump">
+            <component_ref component="Hillfcn"/>
+        </component_ref>
+    </group>
+    <connection>
+        <map_components component_1="ICapump" component_2="Hillfcn"/>
+        <map_variables variable_1="x_h" variable_2="x"/>
+        <map_variables variable_1="hpCa" variable_2="n"/>
+        <map_variables variable_1="H_pCa" variable_2="H"/>
+    </connection>
+</model>
